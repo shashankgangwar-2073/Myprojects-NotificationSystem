@@ -15,14 +15,14 @@ public class WorkerManager {
     }
 
     public void startWorkers(){
-        Worker emailWorker = new EmailWorker(NotificationQueueFactory.getNotificationQueueInstance(Channel.EMAIL));
 
-        Worker smsWorker = new SmsWorker(NotificationQueueFactory.getNotificationQueueInstance(Channel.SMS));
+        for(Channel channel : Channel.values()){
+            Worker worker = new Worker(
+                    NotificationQueueFactory.getNotificationQueueInstance(channel),
+                    ProcessorFactory.getProcessor(channel)
+            );
 
-        Worker pushWorker = new PushWorker(NotificationQueueFactory.getNotificationQueueInstance(Channel.PUSH));
-
-        executorService.submit((Runnable) emailWorker);
-        executorService.submit((Runnable) smsWorker);
-        executorService.submit((Runnable) pushWorker);
+            executorService.submit((Runnable) worker);
+        }
     }
 }

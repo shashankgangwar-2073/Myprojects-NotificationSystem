@@ -2,17 +2,17 @@ package com.example.NotificationSystem.Queue;
 
 import com.example.NotificationSystem.model.Channel;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NotificationQueueFactory {
 
-    private static Map<Channel, NotificationQueue> map = new HashMap<>();
+    private static final Map<Channel, NotificationQueue> map = new ConcurrentHashMap<>();
 
     static {
-        map.put(Channel.SMS, SmsQueue.getInstance());
-        map.put(Channel.PUSH, PushQueue.getInstance());
-        map.put(Channel.EMAIL, EmailQueue.getInstance());
+        for(Channel channel : Channel.values()){
+            map.put(channel, new NotificationQueueImpl());
+        }
     }
 
     public static NotificationQueue getNotificationQueueInstance(Channel channel){
