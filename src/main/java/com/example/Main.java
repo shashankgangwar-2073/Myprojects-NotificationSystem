@@ -1,17 +1,39 @@
 package com.example;
 
+import com.example.NotificationSystem.NotificationController;
+import com.example.NotificationSystem.Queue.NotificationQueueFactory;
+import com.example.NotificationSystem.model.Channel;
+import com.example.NotificationSystem.model.NotificationData;
+import com.example.NotificationSystem.model.NotificationType;
+import com.example.NotificationSystem.worker.*;
+
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    static void main() {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        IO.println(String.format("Hello and welcome!"));
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            IO.println("i = " + i);
-        }
+    //Main function for notification system
+    static void main() {
+
+        WorkerManager manager = new WorkerManager();
+        manager.startWorkers();
+
+        NotificationData data1 = new NotificationData("uid1", Channel.SMS, NotificationType.ALERT);
+        NotificationData data2 = new NotificationData("uid2", Channel.PUSH, NotificationType.ALERT);
+        NotificationData data3 = new NotificationData("uid3", Channel.EMAIL, NotificationType.TRANSACTION);
+        NotificationData data4 = new NotificationData("uid4", Channel.EMAIL, NotificationType.TRANSACTION);
+        NotificationData data5 = new NotificationData("uid5", Channel.SMS, NotificationType.ALERT);
+        NotificationData data6 = new NotificationData("uid6", Channel.EMAIL, NotificationType.PROMOTION);
+        NotificationData data7 = new NotificationData("uid7", Channel.PUSH, NotificationType.PROMOTION);
+
+        NotificationController controller = new NotificationController();
+
+        controller.processNotification(data1);
+        controller.processNotification(data2);
+        controller.processNotification(data3);
+        controller.processNotification(data4);
+        controller.processNotification(data5);
+        controller.processNotification(data6);
+        controller.processNotification(data7);
+
     }
 }
