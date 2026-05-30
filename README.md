@@ -6,6 +6,35 @@ A highly scalable and extensible Java-based notification system designed to proc
 
 The system uses a producer-consumer architecture, decoupled via queues. 
 
+### Block Diagram
+```mermaid
+graph TD
+    A[Client] --> B(NotificationController);
+    B --> C{NotificationQueueFactory};
+    C --> D[NotificationQueue];
+    B --> D;
+    D --> E[Worker];
+    E --> F{ProcessorFactory};
+    F --> G[Processor];
+    E --> G;
+
+    subgraph "Producers"
+        A
+        B
+    end
+
+    subgraph "Queues"
+        C
+        D
+    end
+
+    subgraph "Consumers"
+        E
+        F
+        G
+    end
+```
+
 ### Key Components:
 
 1. **Controller (`NotificationController`)**
@@ -30,6 +59,30 @@ The system uses a producer-consumer architecture, decoupled via queues.
    - `WorkerManager`: Manages the lifecycle and thread pools for the worker instances.
 
 ## How It Works
+
+### Sequence Diagram
+```mermaid
+sequenceDiagram
+    participant Client
+    participant NotificationController
+    participant NotificationQueueFactory
+    participant NotificationQueue
+    participant Worker
+    participant Processor
+
+    Client->>NotificationController: processNotification(notificationData)
+    NotificationController->>NotificationQueueFactory: getNotificationQueueInstance(channel)
+    NotificationQueueFactory-->>NotificationController: queue
+    NotificationController->>NotificationQueue: addEvent(event)
+    
+    loop Poll for events
+        Worker->>NotificationQueue: getEvent()
+        NotificationQueue-->>Worker: event
+    end
+
+    Worker->>Processor: processEvent(event)
+    Processor-->>Worker: success/failure
+```
 
 1. A client submits `NotificationData` to the `NotificationController`.
 2. The controller constructs an `Event` object from the request.
